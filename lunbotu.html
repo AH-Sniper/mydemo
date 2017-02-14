@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>轮播图</title>
+	<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	ul {
+		list-style: none;
+	}
+	#wraper {
+		margin: 100px auto;
+	}
+	#outter-box {
+		width: 600px;
+		height: 280px;
+		margin: 0 auto;
+		background-color: #eee;
+		position: relative;
+		border: 1px solid black;
+		overflow: hidden;
+	}
+	.image {
+		width: 600px;
+		height: 280px;
+		line-height: 280px;
+	}
+	.img-1 { background-color: #e74c3c; }
+	.img-2 { background-color: #4183d7; }
+	.img-3 { background-color: #03c9a9; }
+	.img-4 { background-color: #f89406; }
+	.img-5 { background-color: #86e2d5; }
+	.img-6 { background-color: pink; }
+	a {
+		text-decoration: none;
+		color: #fff;
+		font-size: 80px;
+		text-align: center;
+	}
+	#pics {
+		width: 4200px;
+		position: relative;
+		left: 0;
+	}
+	.pic,.nav {
+		display: inline-block;
+		float: left;
+	}
+	#nav {
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+	}
+	ol li {
+		display: inline-block;
+		width: 30px;
+		background-color: yellow;
+		margin-right: 5px;
+		margin-top: 5px;
+		text-align: center;
+		cursor: pointer;
+		border: 1px solid #ddd;
+	}
+	.current {
+		background-color: orange;
+		color: #fff;
+	}
+	.arrow {
+		display: block;
+		font-size: 60px;
+		cursor: pointer;
+		width: 30px;
+		height: 80px;
+		line-height: 80px;
+		position: absolute;
+		top: 50%;
+		margin-top: -40px;
+		background-color: rgba(0,0,0,.3);
+		opacity: 0;
+		transition: all .3s;
+	}
+	.arrow:hover {
+		color: #fff;	
+	}
+	#leftArrow {
+		left: 0;
+	}
+	#rightArrow {
+		right: 0;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+ 		var olLiArr = document.getElementById('nav').children,
+ 			pics = document.getElementById('pics'),
+ 			imgWidth = pics.children[0].offsetWidth;
+
+		// 定义基本的图片索引 imgKey，nav的索引 navKey
+		var imgKey = 0,
+			navKey = 0;
+ 		// 图片集最后复制第一张，并插入到最后
+ 		var copy = pics.children[0].cloneNode(true);
+ 		pics.appendChild(copy);
+
+ 		// 自动播放：把自动轮播函数放进 定时器中，每隔一段时间执行一次
+ 		var timer = setInterval(autoPlay,2000); // 注意这里放的是函数名
+
+ 		// outter-box 鼠标悬停时停止计时器，显示箭头
+ 		var outterBox = document.getElementById('outter-box');
+ 		outterBox.onmouseover = function(){
+ 			clearInterval(timer);
+ 			outterBox.children[2].style.opacity = '1';
+ 			outterBox.children[3].style.opacity = '1';
+ 		}
+ 		outterBox.onmouseout = function(){
+ 			timer = setInterval(autoPlay,2000);
+ 			outterBox.children[2].style.opacity = '0';
+ 			outterBox.children[3].style.opacity = '0';
+ 		}
+
+ 		// nav绑定hover事件
+ 		for (var i=0;i<olLiArr.length;i++){
+ 			olLiArr[i].index = i;
+ 			olLiArr[i].onmouseover = function(){
+ 				for(var j=0;j<olLiArr.length;j++){
+ 					olLiArr[j].className = '';
+ 				}
+ 				this.className = 'current';
+ 				imgKey = navKey = this.index-1;
+ 				autoPlay();
+ 			};
+ 		}
+
+ 		// 箭头点击事件
+ 		// 左箭头
+ 		outterBox.children[2].onclick = function(){
+ 			// 复制 autoPlay 函数，适当修改--
+ 			imgKey--;
+ 			// 判断当 imgKey 到底时，瞬间跳转，修改索引
+ 			if(imgKey < 0){  
+ 				pics.style.left = -imgWidth*olLiArr.length+'px';
+ 				imgKey = olLiArr.length-1;
+ 			}
+ 			// 执行相应操作
+ 			moveTo(pics,-imgWidth*imgKey);
+
+ 			// nav索引++
+ 			navKey--;
+ 			// 判断 navKey 到底
+ 			if(navKey < 0){
+ 				navKey = olLiArr.length-1;
+ 			}
+ 			// 执行相应操作
+ 			for (var i=0;i<olLiArr.length;i++){
+ 				olLiArr[i].className = '';
+ 			}
+ 			olLiArr[navKey].className = 'current';
+ 		};
+
+ 		// 右箭头
+ 		outterBox.children[3].onclick = function(){
+ 			autoPlay();
+ 		}
+
+
+	// 自动轮播函数
+	function autoPlay(){
+		// 图片集向左移动一次，当前索引++
+		imgKey++;
+		// 判断当 imgKey 到底时，瞬间跳转，修改索引
+		if(imgKey > olLiArr.length){  
+			pics.style.left = '0px';
+			imgKey = 1;
+		}
+		// 执行相应操作
+		moveTo(pics,-imgWidth*imgKey);
+
+		// nav索引++
+		navKey++;
+		// 判断 navKey 到底
+		if(navKey > olLiArr.length-1){
+			navKey = 0;
+		}
+		// 执行相应操作
+		for (var i=0;i<olLiArr.length;i++){
+			olLiArr[i].className = '';
+		}
+		olLiArr[navKey].className = 'current';
+	}
+
+	};
+	// 基本移动函数
+	function moveTo(ele,target){
+		clearInterval(ele.timer);
+		var left = ele.offsetLeft;  // 一般为0
+		ele.timer = setInterval(function(){
+					left += (target-left)>0 ? Math.ceil((target-left)/10) : Math.floor((target-left)/10);
+					ele.style.left = left + 'px';
+					if(ele.offsetLeft === target){
+						clearInterval(ele.timer);
+					}
+					},15);
+
+	}
+	</script>
+</head>
+<body>
+	<div id="wraper">
+		<div id="outter-box">
+			<ul id="pics">
+				<li class="pic"><a href="#"><div class="image img-1">1</div></a></li>
+				<li class="pic"><a href="#"><div class="image img-2">2</div></a></li>
+				<li class="pic"><a href="#"><div class="image img-3">3</div></a></li>
+				<li class="pic"><a href="#"><div class="image img-4">4</div></a></li>
+				<li class="pic"><a href="#"><div class="image img-5">5</div></a></li>
+				<li class="pic"><a href="#"><div class="image img-6">6</div></a></li>
+			</ul>
+			<ol id="nav">
+				<li class="current">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+				<li>5</li>
+				<li>6</li>
+			</ol>
+			<span id="leftArrow" class="arrow"><</span>
+			<span id="rightArrow" class="arrow">></span>
+		</div>
+	</div>
+</body>
+</html>
