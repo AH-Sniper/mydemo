@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+		font-size: 38px;
+		color: #fff;
+		text-align: center;
+		font-weight: bold;
+		font-family: "Microsoft YaHei";
+	}
+	.header {
+		width: 100%;
+		height: 88px;
+		background-color: #ef4836;
+		line-height: 88px;
+	}
+	.banner {
+		width: 980px;
+		height: 460px;
+		line-height: 460px;
+		margin: 20px auto;
+		background-color: #bf55ec;
+	}
+	.footer {
+		width: 100%;
+		height: 88px;
+		background-color: #bf55ec;
+	}
+	.section {
+		margin: 0 auto 20px;
+		width: 980px;
+		height: 520px;
+		line-height: 460px;
+	}
+	#section-1 { background-color: #22a7f0; }
+	#section-2 { background-color: #2ecc71; }
+	#section-3 { background-color: #22a7f0; }
+	#section-4 { background-color: #2ecc71; }
+	#section-5 { background-color: #22a7f0; }
+	#section-6 { background-color: #2ecc71; }
+	#sideNav {
+		list-style: none;
+		position: fixed;
+		bottom: 38px;
+		left: 20px;
+		width: 38px;
+	}
+	#sideNav li {
+		background-color: #f64747;
+		margin-bottom: 6px;
+		height: 38px;
+		font-size: 28px;
+		cursor: pointer;
+	}
+	#sideNav li:hover {
+		background-color: #d91e18;
+	}
+	</style>
+	<script>
+		window.onload = function(){
+			var ul = document.getElementById('sideNav'),
+				liArr = ul.children,
+				sectionArr = document.getElementsByClassName('section');
+
+			var timer = null; // 公共定时器用于监测页面滚动
+			var scrolltop = 0; // 用于存放当前滚动高度
+			for(var i=0;i<liArr.length-1;i++){
+				liArr[i].index = i;
+				liArr[i].onclick = function(){
+					var maxScroll = document.body.clientHeight - document.documentElement.clientHeight;
+					var sectionTop = sectionArr[this.index].offsetTop;
+					var target = sectionTop < maxScroll? sectionTop : maxScroll; // 当滚不到最后一个section的offsetTop时，让页面滚动到底
+					clearInterval(timer);
+					timer = setInterval(function(){
+						var step = (target-scrolltop)/10;
+						step = step>0? Math.ceil(step) : Math.floor(step);
+						scrolltop += step;
+						window.scrollTo(0,scrolltop);
+						if(scrolltop === target){
+							clearInterval(timer);
+						}
+					},20); 
+					// window.scrollTo(0,target);
+				}
+			}
+
+			// 页面滚动，实时更新当前scrolltop值
+			window.onscroll = function(){
+				scrolltop = scroll().top;
+			}
+
+			// 返回顶部
+			liArr[6].onclick = function(){
+				clearInterval(timer);
+				timer = setInterval(function(){
+					var step = (0-scrolltop)/10;
+					step = Math.floor(step);
+					scrolltop += step;
+					window.scrollTo(0,scrolltop);
+					if(scrolltop === 0) {
+						clearInterval(timer);
+					}
+				},20);
+			};
+		}
+		// 兼容 scrollTop 写法
+		function scroll(){
+			return {
+				'top': window.pageYOffset || document.documentElement.scrollTop ||document.body.scrollTop,
+				'left': window.pageXOffset || document.documentElement.scrollLeft ||document.body.scrollLeft
+			}
+		}
+	</script>
+</head>
+<body>
+	<div class="header">Header</div>
+	<div class="banner">Banner</div>
+	<div class="section" id="section-1">section-1</div>
+	<div class="section" id="section-2">section-2</div>
+	<div class="section" id="section-3">section-3</div>
+	<div class="section" id="section-4">section-4</div>
+	<div class="section" id="section-5">section-5</div>
+	<div class="section" id="section-6">section-6</div>
+	<div class="footer"></div>
+	<ul id="sideNav">
+		<li>1</li>
+		<li>2</li>
+		<li>3</li>
+		<li>4</li>
+		<li>5</li>
+		<li>6</li>
+		<li>↑</li>
+	</ul>
+</body>
+</html>

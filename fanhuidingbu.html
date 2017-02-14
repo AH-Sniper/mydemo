@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	.content {
+		width: 380px;
+		margin: 0 auto;
+		background-color: #d2d7d3;
+		box-sizing: border-box;
+		padding: 50px 38px;
+	}
+	#btn{
+		width: 58px;
+		height: 58px;
+		background-color: #4b77be;
+		border-radius: 6px;
+		color: #fff;
+		font-weight: bolder;
+		line-height: 58px;
+		text-align: center;
+		cursor: pointer;
+		font-size: 38px;
+		position: fixed;
+		bottom: 50px;
+		right: 50px;
+	}
+	#btn:hover {
+		background-color: #3a539b;
+	}
+	</style>
+	<script>
+	window.onload = function(){
+		var btn = document.getElementById('btn');
+		var timer = null;
+
+		var target = 0;  // 目标页首
+		var offsetY = 0;  // 初始化滚动的距离，下面在window.onscroll时，实时更新offsetY的值，利用变化的offsetY 来实现缓动动画的step
+		btn.onclick = function(){
+			// 不兼容
+			// clearInterval(timer);
+			// timer = setInterval(function(){
+			// 	var step = document.body.scrollTop/10;
+			// 	document.body.scrollTop -= step;
+			// 	if(document.body.scrollTop === 0){
+			// 		clearInterval(timer);
+			// 	}
+			// },20);
+
+			// window.scrollTo(0,0);  跳转到页首的技术点
+			clearInterval(timer);
+			timer = setInterval(function(){
+				var step = (target - offsetY)/10;
+				step = step>0? Math.ceil(step) : Math.floor(step);
+				offsetY += step;
+				window.scrollTo(0,offsetY);
+				if(offsetY === 0) {
+					clearInterval(timer);
+				}
+			},20);
+		};
+
+		window.onscroll = function(){
+			offsetY = scroll().top;  //  当滚动时实时更新offsetY的值
+		}
+	}
+	function scroll(){
+		return {
+			'top': window.pageYOffset || document.documentElement.scrollTop ||document.body.scrollTop,
+			'left': window.pageXOffset || document.documentElement.scrollLeft ||document.body.scrollLeft
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="btn">↑</div>
+	<div class="content"><div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta, reiciendis suscipit a doloribus animi fugiat sunt vitae iure cum, eos eius ullam error reprehenderit, provident, voluptates architecto eligendi id vero.</div>
+	<div>Placeat dolor illo earum aliquid dolore facere accusantium illum consectetur alias aut, beatae, architecto nesciunt harum est nemo iure sint delectus voluptas et aliquam odio deserunt. Est, doloribus eveniet labore!</div>
+	<div>Error incidunt excepturi, doloribus officia aspernatur quod libero, eos ab quisquam quis quibusdam cum sed dicta voluptatibus, qui impedit, laboriosam architecto odit aliquam maiores laborum. Quia cupiditate a maxime dolorem.</div>
+	<div>Quaerat est dicta nostrum facilis quo veritatis totam, vitae ratione accusamus blanditiis rerum non aliquam molestias sint recusandae in quasi odio voluptatibus, fugiat voluptas amet sapiente aliquid similique. Doloribus, recusandae!</div>
+	<div>Quod dicta numquam repellendus nulla rem eum ullam, quos mollitia, pariatur iure, vel saepe earum sit eligendi obcaecati officia doloribus explicabo reiciendis nobis rerum optio nihil soluta? Reprehenderit, quasi earum.</div>
+	<div>Rerum adipisci incidunt voluptate a, perspiciatis eaque ipsum, labore, facilis aut omnis officia rem voluptatibus libero vel culpa dicta quam non ab corrupti sapiente excepturi. Hic libero, consectetur molestiae itaque.</div>
+	<div>Quaerat ipsum voluptates necessitatibus ea consectetur illum architecto aut reprehenderit assumenda voluptatibus sunt, velit cum possimus vitae, suscipit ut voluptatem ipsa? Repellendus rerum dolores, debitis sequi fugiat veritatis dolore nesciunt?</div>
+	<div>Magni, sed, animi! Reiciendis ab cum numquam odio, repudiandae quo! Vel quia asperiores perferendis placeat. Eos distinctio illum, laudantium unde, explicabo rerum hic itaque quae enim eligendi cum magnam fuga?</div>
+	<div>Recusandae id, provident fugiat beatae quidem saepe! Totam omnis aperiam iusto eaque quod architecto ut voluptate nesciunt, a tempora. Molestias eveniet necessitatibus suscipit beatae labore unde sed esse odio repellendus?</div>
+	<div>Dignissimos corrupti, autem expedita fuga iste quis delectus quaerat dolor magnam accusantium ad accusamus reiciendis itaque laborum est tenetur, asperiores odit corporis laboriosam perferendis vero modi quos, consequatur dolorem. Voluptatem.</div>
+	<div>Perferendis, mollitia aliquid modi expedita quae recusandae odio sunt quos possimus deserunt repellat voluptate, veritatis ut cum ipsam magnam accusamus rerum tempora magni et esse velit. Reiciendis, fugiat saepe in.</div>
+	<div>Necessitatibus deleniti illum, consequuntur officia, vero maiores cum sit voluptatum nesciunt esse optio nisi reprehenderit eaque blanditiis voluptatem ex, nam id! Soluta, magni cupiditate veniam officia perspiciatis pariatur fuga similique?</div>
+	<div>Dolorum nostrum quibusdam, cupiditate repellendus aspernatur, neque mollitia accusamus. Velit nam autem quod laboriosam, at nostrum, porro fugiat dolorem qui cum blanditiis beatae id rem, obcaecati sequi corporis, provident expedita.</div>
+	<div>Est, quia. Quo, facere deserunt iusto cupiditate ducimus delectus reprehenderit officiis pariatur. Corrupti rem nobis sit, cupiditate ea veniam. Corrupti pariatur id non beatae perferendis odit cum neque eaque aperiam.</div>
+	<div>Veniam fugiat non nostrum aspernatur reprehenderit quis voluptatum accusamus qui impedit perferendis! Ipsum nihil similique iste perferendis accusamus nesciunt, nostrum hic velit, quae at quos aspernatur, dolor maxime placeat vel.</div>
+	<div>Labore voluptate sequi, voluptatem cupiditate ex magnam, ipsum at et saepe iste aliquid dolor debitis dolorem sed rerum ullam cumque magni, est voluptas. Possimus itaque nemo quasi? Repudiandae, quis, quasi.</div>
+	<div>Consequatur, sit, quidem. Mollitia itaque ea fugit dolorum. Numquam mollitia repellendus doloremque? Facilis voluptatibus quibusdam deserunt nemo, distinctio ipsa dolores neque ea eum facere sapiente explicabo unde. Nam, rem ea!</div>
+	<div>Distinctio suscipit, accusantium nulla laboriosam consequuntur perspiciatis at saepe perferendis laborum necessitatibus. Veritatis excepturi molestiae asperiores accusamus unde labore incidunt voluptate quasi animi, placeat, saepe officia iste totam necessitatibus. Eaque.</div>
+	<div>Natus alias perspiciatis possimus quo, nam adipisci numquam harum aut necessitatibus est, a deserunt earum dolores optio minus reiciendis incidunt ut animi ipsum qui exercitationem eaque. Laudantium explicabo ea quo.</div>
+	<div>Voluptatibus modi vel architecto totam, quas maxime harum, sunt, labore doloribus dolorum molestias voluptatem nostrum iusto quidem reprehenderit placeat. Placeat eius suscipit voluptatibus iure molestias ipsa veritatis et, facere incidunt!</div></div>
+</body>
+</html>

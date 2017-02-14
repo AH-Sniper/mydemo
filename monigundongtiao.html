@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	body {
+		height: 980px;
+	}
+	.wraper {
+		border: 1px solid #ddd;
+		padding: 10px 20px 10px 10px;
+		width: 310px;
+		margin: 20px auto;
+		border-radius: 5px;
+		position: relative;
+	}
+	.outterBox {
+		width: 280px;
+		height: 380px;
+		background-color: #ececec;
+		padding: 10px 20px 10px 10px;
+		overflow: hidden;
+		border-radius: 5px;
+	}
+	.content {
+		position: relative;
+		font-family: arial;
+	}
+	.scrollBar {
+		height: 400px;
+		width: 18px;
+		background-color: #fde3a7;
+		position: absolute;
+		right: 1px;
+		top: 10px;
+		border-radius: 2px;
+	}
+	#bar {
+		width: 16px;
+		position: absolute;
+		right: 1px;
+		top: 0;
+		background-color: #f9690e;
+		border-radius: 2px;
+		cursor: pointer;
+	}
+	</style>
+	<script>
+	window.onload = function(){
+		var bar = document.getElementById('bar');
+		var scrollBar =document.getElementsByClassName('scrollBar')[0];
+		var wraper = document.getElementsByClassName('wraper')[0];
+		var content = document.getElementsByClassName('content')[0];
+		var barHeight = 400 - (content.offsetHeight-380)/2;  //  2是滚动速率，自己随便设
+
+		bar.style.height = barHeight + 'px';
+
+		var y = 0;
+		var barTop = 0;
+
+		bar.onmousedown = function(e){
+			document.onmousemove = null;
+			y = bar.offsetTop;
+			// 
+			document.onmousemove = function(e2){
+				// console.log(e2.pageY-e.pageY);
+				deltaY = e2.pageY - e.pageY;
+				barTop = y + deltaY;
+				if(barTop <= 0) {
+					barTop = 0;
+				} else if(barTop >= (scrollBar.offsetHeight -bar.offsetHeight)){
+					barTop = scrollBar.offsetHeight -bar.offsetHeight;
+				}
+				bar.style.top = barTop + 'px';
+				// content 内容滚动
+				content.style.top = -2*barTop +'px';  // 2是之前设的滚动速率
+				window.getSelection().removeAllRanges();  // 防止滚动过程中选中文字
+			}
+		};
+
+		document.onmouseup = function(e){
+			document.onmousemove = null;
+		}
+
+		wraper.onmousewheel = function(e){
+			barTop += e.wheelDelta >0 ? -10 : 10;
+			if(barTop <= 0) {
+				barTop = 0;
+			} else if(barTop >= (scrollBar.offsetHeight -bar.offsetHeight)){
+				barTop = scrollBar.offsetHeight -bar.offsetHeight;
+			}
+			bar.style.top = barTop + 'px';
+			// content 内容滚动
+			content.style.top = -2*barTop +'px';  // 2是之前设的滚动速率
+			e.preventDefault();
+			// 作用是阻止冒泡，这里e.stopPropogation()不起作用
+		}
+		// firefox 的滚轮事件
+		wraper.addEventListener('DOMMouseScroll',function(e){
+			barTop += e.detail <0 ? -10 : 10;
+			if(barTop <= 0) {
+				barTop = 0;
+			} else if(barTop >= (scrollBar.offsetHeight -bar.offsetHeight)){
+				barTop = scrollBar.offsetHeight -bar.offsetHeight;
+			}
+			bar.style.top = barTop + 'px';
+			// content 内容滚动
+			content.style.top = -2*barTop +'px';  // 2是之前设的滚动速率
+			e.preventDefault();
+		},false);
+	}
+	</script>
+</head>
+<body>
+	<div class="wraper">
+		<div class="scrollBar"><div id="bar"></div></div>
+		<div class="outterBox">
+			<div class="content">
+				<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet maxime aliquam quidem a corporis. Beatae temporibus quasi accusantium distinctio, fugit iure error excepturi eveniet veritatis repellendus incidunt doloremque rem est.</div>
+				<div>Magni est non similique neque, eum minus earum consequuntur provident facere, officiis aspernatur rerum at alias debitis blanditiis quos. Nam aliquid dolorem, amet fugiat ullam adipisci dolorum aut id officiis.</div>
+				<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est facere quae porro iusto alias natus, modi deserunt voluptatum at dolore facilis eaque accusamus atque nam dignissimos harum eius. Maiores, fuga!</div>
+				<div>Eveniet delectus, veniam dolorum quidem, tempore aliquam asperiores aspernatur autem, quia repellat ullam omnis. Facilis voluptatum vel incidunt officia, molestiae odit, soluta eius, veniam harum reiciendis deserunt eum atque dolor.</div>
+				<div>Voluptate mollitia ipsam dolore dolor amet ut odio, eius repellat autem culpa. Dolorem quidem a quaerat error animi, fuga quos possimus harum illo? Voluptate saepe in explicabo modi id porro.</div>
+				<div>Eius cumque impedit veniam, dolor temporibus animi distinctio. Optio eius earum, ratione tenetur consequuntur rerum animi quam. Pariatur, deserunt. Inventore minima ad ducimus, assumenda dicta hic, porro omnis explicabo tenetur.</div>
+				<div>Officiis maxime itaque aperiam perferendis amet praesentium beatae asperiores, autem facilis quos, ratione sit ipsam, pariatur, suscipit voluptatum ex. Odit dolor soluta nihil dolorem quidem voluptates sed harum aut nisi.</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

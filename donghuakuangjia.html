@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	* {
+		padding: 0;
+		margin: 0;
+	}
+	ul {
+		list-style: none;
+		margin: 30px 200px;
+		position: relative;
+	}
+	li {
+		width: 200px;
+		height: 100px;
+		margin-bottom: 20px;
+		filter: alpha(opacity:30);      /*IE*/
+		opacity: 0.5;
+		border: 5px solid red; 
+		position: relative;
+	}
+	#a {
+		background-color: #f22613;
+	}
+	#b {
+		background-color: #4183d7;
+	}
+	#c {
+		background-color: #2ecc71;
+	}
+	</style>
+	<script>
+
+	window.onload = function(){
+		var a = document.getElementById('a');
+		var b = document.getElementById('b');
+		var c = document.getElementById('c');
+
+		c.onmouseover = function(){
+			startMove(c,{"width":500,"height":200,"opacity":100,"z-index":1})
+		}
+		c.onmouseout = function(){
+			startMove(c,{"width":200,"height":100,"opacity":50,"z-index":0})
+		}
+		a.onmouseover = function(){
+			startMove(b,{"left":300,"height":200,"opacity":100});
+			startMove(a,{"width":500,"height":200,"opacity":100},function(){alert('over')})
+		}
+		a.onmouseout = function(){
+			startMove(b,{"left":0,"height":100,"opacity":50});
+			startMove(a,{"width":300,"height":100,"opacity":50})
+		}
+
+	}
+	// 动画函数封装
+	function startMove(ele,json,fn){
+		clearInterval(ele.timer);
+		ele.timer = setInterval(function(){
+
+			var flag = true;  // 开闭原则	
+			// 首先遍历json 操作属性
+			for(var k in json) {
+				var curAttr = getStyle(ele,k);  
+				// opacity 和其他属性分别处理
+				if( k !== 'opacity') {
+					if(k === 'z-index') {
+						ele.style.zIndex = json[k];
+					} else {
+						curAttr = parseInt(curAttr); // 提取获取到的属性的数值部分
+						var step = (json[k] - curAttr)/10;
+						step = step > 0 ? Math.ceil(step) : Math.floor(step);
+						curAttr += step;
+						ele.style[k] = curAttr + 'px';
+						if(curAttr !== json[k]) {
+							flag = false;
+						}
+					}
+				} else {
+					// opacity 属性这里统一设为百分制
+					curAttr *= 100;
+					var step = (json[k] - curAttr)/10;
+					step = step > 0 ? Math.ceil(step) : Math.floor(step);
+					curAttr += step;
+					ele.style.filter = 'alpha(opacity:'+curAttr+')';
+					ele.style.opacity = curAttr/100;
+					if(curAttr !== json[k]) {
+						flag = false;
+					}
+				}
+			}
+			// 然后统一判断
+			if(flag === true) {
+				clearInterval(ele.timer);
+				if(fn) {
+					fn();  // 回调函数
+				}
+			}
+		},20)
+	}
+	// 获取元素样式兼容写法
+	function getStyle(ele,attr) {	
+		if(window.getComputedStyle) {
+			return window.getComputedStyle(ele,null)[attr];
+		}
+		return ele.currentStyle[attr];
+	}
+	</script>
+</head>
+<body>
+	 <ul>
+	 	<li id="a"></li>
+	 	<li id="b"></li>
+	 	<li id="c"></li>
+	 </ul>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	div {
+		width: 1200px;
+		margin: 50px auto;
+		overflow: hidden;
+	}
+	ul {
+		list-style: none;
+		width: 1800px;
+		height: 300px;
+		border: 1px solid #ddd;
+		cursor: pointer;
+		position: relative;
+	}
+	li {
+		width: 800px;
+		height: 100%;
+		/*float: left;*/
+		position: absolute;
+		top: 0;
+	}
+	</style>
+	<script>
+	window.onload = function(){
+		var ul = document.getElementsByTagName('ul')[0];
+		var liArr = ul.getElementsByTagName('li');
+		for(var i = 0;i < liArr.length;i++){
+			liArr[i].style.background = 'url(img/sfq-'+(i+1)+'.jpg) no-repeat 0 0';
+		}
+
+		// 所有图片的最前位置  操作li 的left值，就避免操作width造成相互影响
+		var a = [];
+		for(var i = 0;i < liArr.length;i++) {
+			a.push(i*100);
+		}
+		// 所有图片的初始位置
+		var b = [];
+		for(var i = 0;i < liArr.length;i++) {
+			b.push(i*240);
+			liArr[i].style.left = b[i]+'px';   // 初始化
+		}
+		// 所有图片的最后位置
+		var c =[0];
+		for(var i = 1;i < liArr.length;i++) {
+			c.push((i-1)*100+800);
+		}
+
+		var tgtIndex = 0;
+
+		ul.onmouseover = function(e){
+			e = e || window.event;
+			var tgt = e.target ? e.target : e.srcElement;
+ 			for(var i = 0;i < liArr.length;i++) {
+ 				if(liArr[i] === tgt) {
+ 					tgtIndex = i;
+ 				}
+ 			}
+ 			for(var i=0;i<=tgtIndex;i++){
+ 				startMove(liArr[i],{'left':a[i]});
+ 			}
+ 			for (var j = (tgtIndex+1);j<liArr.length;j++){
+ 				startMove(liArr[j],{'left':c[j]});
+ 			}
+		}
+		ul.onmouseout = function(){
+			for(var i=0;i<liArr.length;i++){
+				startMove(liArr[i],{'left':b[i]});
+			}
+		}
+	}
+	// 动画函数封装
+		function startMove(ele,json,fn){
+			clearInterval(ele.timer);
+			ele.timer = setInterval(function(){
+
+				var flag = true;  // 开闭原则	
+				// 首先遍历json 操作属性
+				for(var k in json) {
+					var curAttr = getStyle(ele,k);  
+					// opacity 和其他属性分别处理
+					if( k !== 'opacity') {
+						curAttr = parseInt(curAttr); // 提取获取到的属性的数值部分
+						var step = (json[k] - curAttr)/10;
+						step = step > 0 ? Math.ceil(step) : Math.floor(step);
+						curAttr += step;
+						ele.style[k] = curAttr + 'px';
+						if(curAttr !== json[k]) {
+							flag = false;
+						}
+					} else {
+						// opacity 属性这里统一设为百分制
+						curAttr *= 100;
+						var step = (json[k] - curAttr)/10;
+						step = step > 0 ? Math.ceil(step) : Math.floor(step);
+						curAttr += step;
+						ele.style.filter = 'alpha(opacity:'+curAttr+')';
+						ele.style.opacity = curAttr/100;
+						if(curAttr !== json[k]) {
+							flag = false;
+						}
+					}
+				}
+				// 然后统一判断
+				if(flag === true) {
+					clearInterval(ele.timer);
+					if(fn) {
+						fn();  // 回调函数
+					}
+				}
+			},20)
+		}
+	// 获取元素样式兼容写法
+	function getStyle(ele,attr) {	
+		if(window.getComputedStyle) {
+			return window.getComputedStyle(ele,null)[attr];
+		}
+		return ele.currentStyle[attr];
+	}
+	</script>
+</head>
+<body>
+	<div>
+		<ul>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+</body>
+</html>

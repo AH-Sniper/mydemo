@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	.sm-pic {
+		width: 570px;
+		height: 300px;
+		margin-top: 50px;
+		margin-left: 15px;
+	}
+	.sm-pic img {
+		cursor: crosshair;
+	}
+	.big-pic {
+		width: 760px;
+		height: 400px;
+		position: absolute;
+		right: 0;
+		top: 0;
+		background-image: url(img/big.jpg);
+		background-repeat: no-repeat;
+		display: none;
+	}
+	.mouseShadow {
+		width: 228px;
+		height: 120px;
+		position: absolute;
+		cursor: crosshair;
+		background-color: rgba(255,255,255,.5);
+		display: none;
+	}
+	</style>
+	<script>
+	window.onload = function(){
+		var div = document.getElementsByClassName('sm-pic')[0];
+		var img = document.getElementsByTagName('img')[0];
+		var imgZoom = document.getElementsByClassName('big-pic')[0];
+		var mouseShadow = document.createElement('div');
+		mouseShadow.className = 'mouseShadow';
+
+		div.onmouseenter = function(){  // 不用 onmouseover，因为over 属于冒泡事件，enter 不冒泡，IE对over事件兼容性不好。
+			imgZoom.style.display = 'block';
+			this.appendChild(mouseShadow);
+			mouseShadow.style.display = 'block';
+		}
+
+		div.onmousemove = function(e){
+			moveMouse(e);
+		}
+		function moveMouse(e){
+			var posX = e.pageX,
+				posY = e.pageY;
+
+			var shadowX = posX - 114,
+				shadowY = posY - 60;  // 鼠标小阴影的坐标，默认全地图
+			// 设定小阴影的活动范围在div内
+			// 最小X：div.offsetLeft    最大X：(div.offsetLeft + div.offsetWidth)-142
+			// 最小Y：div.offsetTop    最大Y：(div.offsetTop + div.offsetHeight)-75
+			if(shadowX<div.offsetLeft) {
+				shadowX = div.offsetLeft;
+			} else if(shadowX>=((div.offsetLeft + div.offsetWidth)-228)) {
+				shadowX = (div.offsetLeft + div.offsetWidth)-228;
+			} 
+
+			if(shadowY<div.offsetTop) {
+				shadowY = div.offsetTop;
+			} else if (shadowY >= ((div.offsetTop + div.offsetHeight)-120)) {
+				shadowY = (div.offsetTop + div.offsetHeight)-120;
+			}
+			mouseShadow.style.top = shadowY + 'px';
+			mouseShadow.style.left = shadowX + 'px';
+
+			// 计算小阴影覆盖的图像的左上角坐标：smX smY 其实就是 shadowX-div.offsetLeft shadowY-div.offsetTop
+			var smX = shadowX-div.offsetLeft;
+			var smY = shadowY-div.offsetTop;
+			// 转化成大图片的左上角坐标 bigX bigY
+			var bigX = 1900/570*smX;
+			var bigY = 1000/300*smY;
+			//
+			imgZoom.style.backgroundPosition = (-bigX)+'px '+(-bigY)+'px';
+		}
+
+		div.onmouseleave = function(){
+			imgZoom.style.display = 'none';
+			mouseShadow.style.display = 'none';
+		}
+	};
+	</script>
+</head>
+<body>
+	<div class="sm-pic"><img src="img/small.jpg" alt="audi"></div>
+	<div class="big-pic"></div>
+</body>
+</html>
