@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	body {
+		text-align: center;
+	}
+	canvas {
+		border: 1px solid deeppink;
+	}
+	</style>
+</head>
+<body>
+
+	<canvas id="cvs"></canvas>
+
+	<script>
+ 		// 画圆角矩形
+ 		/*
+			config = {
+				x : 100,
+				y : 100,
+				width : 200,
+				height : 150,
+				cornerRadius : 10,
+				color : 'red',
+				lineWidth : 2
+			}
+ 		*/
+ 		function ArcRect(ctx,config){
+ 			this.ctx = ctx;
+ 			this.x = config.x;
+ 			this.y = config.y;
+ 			this.width = config.width;
+ 			this.height = config.height;
+ 			this.radius = config.cornerRadius;
+ 			this.color = config.color || "red";
+ 			this.lineWidth = config.lineWidth || 1;
+ 		}
+
+ 		ArcRect.prototype = {
+ 			constructor : ArcRect,
+ 			draw : function(){
+ 				var ctx = this.ctx;
+ 				var x = this.x;
+ 				var y = this.y;
+ 				var radius = this.radius;
+ 				var width = this.width;
+ 				var height = this.height;
+
+ 				ctx.beginPath();
+ 				// 先画4条直线，把圆角的空留出来
+ 				// 用 arcTo 绘制 相切圆弧
+ 				// 合并，一条龙
+ 				ctx.moveTo(x + radius,y);
+ 				ctx.lineTo(x + width - radius, y);
+ 				ctx.arcTo(x + width,y,x + width,y + radius,radius);
+ 				ctx.lineTo(x + width, y + height - radius);
+ 				ctx.arcTo(x + width,y + height,x + width - radius,y + height,radius);
+ 				ctx.lineTo(x + radius, y + height);
+ 				ctx.arcTo(x,y + height,x,y +height- radius,radius);
+ 				ctx.lineTo(x, y + radius);
+ 				ctx.arcTo(x,y,x + radius,y,radius);
+
+ 				ctx.lineWidth = this.lineWidth;
+ 				ctx.strokeStyle = this.color;
+ 				ctx.stroke();
+ 			},
+ 			fill : function(color){
+ 				this.ctx.fillStyle = color;
+ 				this.ctx.fill();
+ 			}
+ 		}
+	</script>
+
+	<script>
+		var cvs = document.getElementById("cvs");
+		var ctx = cvs.getContext("2d");
+		cvs.width = "500";
+		cvs.height = "500";
+
+		var cfg = {
+			x : 100,
+			y : 100,
+			width : 200,
+			height : 250,
+			cornerRadius : 10,
+			color : 'red',
+			lineWidth : 6
+		}
+
+		var arcrect = new ArcRect(ctx,cfg);
+		arcrect.draw();
+		arcrect.fill("rgba(255,0,0,.5");
+ 		
+		var cfg2 = {
+			x : 200,
+			y : 200,
+			width : 250,
+			height : 280,
+			cornerRadius : 60,
+			color : 'green',
+			lineWidth : 2
+		}
+
+		var arcrect2 = new ArcRect(ctx,cfg2);
+		arcrect2.draw();
+		arcrect2.fill("rgba(0,255,0,.5");
+
+		var cfg3 = {
+			x : 220,
+			y : 60,
+			width : 250,
+			height : 200,
+			cornerRadius : 30,
+			color : 'blue',
+			lineWidth : 4
+		}
+
+		var arcrect3 = new ArcRect(ctx,cfg3);
+		arcrect3.draw();
+		arcrect3.fill("rgba(0,0,255,.5");
+
+	</script>
+</body>
+</html>

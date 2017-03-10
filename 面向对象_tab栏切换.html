@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+	.wraper {
+		margin: 120px auto;
+		width: 800px;
+		height: 380px;
+		border: 1px solid #bbb;
+		font-family: 'Microsoft Yahei',sans-serif;
+	}
+	ul {
+		list-style: none;
+		overflow: hidden;
+	}
+	li {
+		float: left;
+		width: 100px;
+		height: 46px;
+		line-height: 46px;
+		text-align: center;
+		cursor: pointer;
+		transition: all .3s;
+	}
+	li.active {
+		background-color: #fde3a7;
+		border-bottom: 3px solid red;
+	}
+	.tab-body {
+		height: 334px;
+		overflow: hidden;
+	}
+	.tab-body div {
+		height: 100%;
+		line-height: 334px;
+		font-size: 50px;
+		font-weight: 500;
+		text-align: center;
+		display: none;
+		color: #fff;
+	}
+	.tab-body div.active {
+		display: block;
+	}
+	.tab-body div:nth-child(1){
+		background-color: #4b77be;
+	}
+	.tab-body div:nth-child(2){
+		background-color: #19b5fe;
+	}
+	.tab-body div:nth-child(3){
+		background-color: #be90d4;
+	}
+	.tab-body div:nth-child(4){
+		background-color: #f62459;
+	}
+	.tab-body div:nth-child(5){
+		background-color: #26c281;
+	}
+	</style>
+	<script>
+	// tab切换对象
+	// 构造函数
+	function Tab(config){
+		// 将配置文件的信息转化成对象的属性
+		this.tabMenu = null;
+		this.tabBody = null;
+		this.auto = false;
+		if(config){
+			this.init(config);
+		}
+	}
+
+	Tab.prototype = {
+		constructor : Tab,
+		currIndex : 0,  // 存放当前索引
+		timer : null,  // 存放自动播放定时器
+		initElement : function(config){
+			this.tabMenu = document.getElementById(config.menuId).children;
+			this.tabBody = document.getElementById(config.bodyId).children;
+			this.auto = config.auto;
+		},
+		initActive : function(){
+			this.tabMenu[this.currIndex].classList.add("active");
+			this.tabBody[this.currIndex].classList.add("active");
+		},
+		initEvents : function(){
+			for(var i=0;i<this.tabMenu.length;i++){
+				var menu = this.tabMenu[i];
+				var that = this;  // tab对象
+				menu.index = i;  // 把索引存放为属性
+				menu.onclick = function(){
+					clearInterval(that.timer);
+					that.currIndex = this.index;
+					that.changeTab(this);
+					if(that.auto){
+						that.autoPlay();
+					}
+				};
+			}
+		},
+		changeTab : function(current){
+			current.parentNode.querySelector(".active").classList.remove("active");
+			this.tabBody[0].parentNode.querySelector(".active").classList.remove("active");
+
+			current.classList.add("active");
+			this.tabBody[current.index].classList.add("active");
+		},
+		autoPlay : function(){
+			var that = this;
+			this.timer = setInterval(function(){
+				that.currIndex++;
+				if(that.currIndex == that.tabMenu.length){
+					that.currIndex = 0;
+				}
+				that.changeTab(that.tabMenu[that.currIndex]);
+			},2000);
+		},
+		init : function(config){
+			this.initElement(config);
+			this.initActive();
+			this.initEvents();
+			if(this.auto) {
+				this.autoPlay();
+			}
+		}
+	}
+
+	window.onload = function(){
+
+		// 新建一个tab切换对象，包含config
+		var tab = new Tab({
+			menuId : "tabMenu",
+			bodyId : "tabBody",
+			auto : true
+		});
+	}
+	</script>
+</head>
+<body>
+	<div class="wraper">
+		<div class="tab-menu">
+			<ul id="tabMenu">
+				<li>皇马</li>
+				<li>巴萨</li>
+				<li>曼联</li>
+				<li>切尔西</li>
+				<li>拜仁</li>
+			</ul>
+		</div>
+		<div class="tab-body" id="tabBody">
+			<div>皇马</div>
+			<div>巴萨</div>
+			<div>曼联</div>
+			<div>切尔西</div>
+			<div>拜仁</div>
+		</div>						
+	</div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	body {
+		text-align: center;
+	}
+	canvas {
+		border: 1px solid red;
+	}
+	</style>
+</head>
+<body>
+	<canvas id="cvs"></canvas>
+	<script>
+		var cvs = document.getElementById("cvs");
+		cvs.width = '500';
+		cvs.height = '500';
+		var ctx = cvs.getContext("2d");
+
+		// 坐标轴边距
+		var padding = {
+			top : 10,
+			right : 10,
+			bottom : 10,
+			left : 10
+		};
+
+		// 坐标轴中箭头的宽高
+		var arrow = {
+			width : 8,
+			height : 16
+		}
+		// 坐标轴上顶点坐标
+		var coorTop = {
+			x : padding.left,
+			y : padding.top
+		}
+		// 原点坐标
+		var coorOrigin = {
+			x : padding.left,
+			y : cvs.height - padding.bottom
+		}
+		// 坐标轴右顶点坐标
+		var coorRight = {
+			x : cvs.width - padding.right,
+			y : cvs.height - padding.bottom
+		}
+
+		// 画坐标轴中的两条线
+		ctx.moveTo(coorTop.x , coorTop.y);
+
+		ctx.lineTo(coorOrigin.x , coorOrigin.y);
+		ctx.lineTo(coorRight.x , coorRight.y);
+		ctx.lineWidth = 2;
+		ctx.stroke();
+
+		// 画箭头
+		ctx.beginPath();
+		ctx.moveTo(coorTop.x , coorTop.y);
+		ctx.lineTo(coorTop.x - arrow.width/2, coorTop.y + arrow.height);
+		ctx.lineTo(coorTop.x, coorTop.y + arrow.height*2/3);
+		ctx.lineTo(coorTop.x + arrow.width/2, coorTop.y + arrow.height);
+		ctx.closePath();
+
+		ctx.moveTo(coorRight.x , coorRight.y);
+		ctx.lineTo(coorRight.x - arrow.height, coorRight.y - arrow.width/2);
+		ctx.lineTo(coorRight.x - arrow.height*2/3, coorRight.y);
+		ctx.lineTo(coorRight.x - arrow.height, coorRight.y + arrow.width/2);
+		ctx.closePath();
+
+		ctx.lineWidth = 2;
+		ctx.stroke();
+		ctx.fill();
+
+		/*
+			自建坐标轴中的坐标转换成 canvas 坐标
+			canvasX = coorOrigin.x + x
+			canvasY = coorOrigin.y - y
+		*/
+		// 自建坐标 100,100 处画一个点
+		ctx.beginPath();
+		// ctx.fillRect(coorOrigin.x + 100, coorOrigin.y - 100 ,4,4);
+
+		// 需求：画这些点 [[110,80],[180,120],[230,50],[340,280],[450,250]]
+		var pointArr = [[110,80],[180,120],[230,50],[260,150],[340,280],[450,250]];
+
+		// 设置连接线起点
+		ctx.moveTo(coorOrigin.x + pointArr[0][0] , coorOrigin.y - pointArr[0][1]);
+		// 利用循环
+		(function(){
+			for(var i =0;i<pointArr.length;i++){
+				var x = coorOrigin.x + pointArr[i][0];
+				var y = coorOrigin.y - pointArr[i][1];
+				// 画点
+				// -3 是为了修复默认把坐标当左上角开始画矩形
+				ctx.fillRect(x-3, y-3,6,6);
+				// 画连接线
+				ctx.lineTo(x,y);
+			}
+		})();
+		
+		ctx.strokeStyle = "red";
+		ctx.stroke();
+
+		//
+		ctx.beginPath();
+
+
+
+
+	</script>
+</body>
+</html>

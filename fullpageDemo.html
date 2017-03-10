@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	/*重置样式*/
+	body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,fieldset,table,td,img,div,dl,dt,dd,input {margin: 0;padding: 0;}
+	body {font-size: 12px;}
+	img {border: none;}
+	h1,h2,h3,h4,h5,h6 { font-weight: normal;}
+	ol,ul,li {list-style: none;}
+	input,select,textarea {outline: none;border: none;}
+	textarea {resize: none;}
+	a {text-decoration: none;}
+	/**/
+	h3 {
+		width: 200px;
+		height: 100px;
+		background-color: yellow;
+		transition: all 1s;
+		transform: translateX(-500px);
+	}
+	.section.current h3{
+		transform: translateX(500px) translateY(400px);
+	}
+	</style>
+</head>
+<body>
+	<div id="fullpage">
+		<div class="section"><h3>第一屏</h3></div>
+		<div class="section"><h3>第二屏</h3></div>
+		<div class="section"><h3>第三屏</h3></div>
+		<div class="section"><h3>第四屏</h3></div>
+		<div class="section"><h3>第五屏</h3></div>
+	</div>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery.fullPage.min.js"></script>
+	<script>	
+	$(function(){
+		$("#fullpage").fullpage({
+			sectionsColor:["#0da5d6","#2ab561","#de8910","#16ba9d","#0da5d6"],
+ 			afterLoad:function(link,index){
+ 				// alert(index);
+ 				// 把添加 current 类做为动画的开关
+ 				$(".section").removeClass('current');
+ 				// 设个10毫秒延迟是为了解决第一屏刚加载时没有动画
+ 				setTimeout(function(){
+ 					$(".section").eq(index-1).addClass('current');
+ 				},10);
+ 			},
+
+		});
+	});
+	</script>
+</body>
+</html>

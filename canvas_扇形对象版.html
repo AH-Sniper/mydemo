@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	body {
+		text-align: center;
+	}
+	canvas {
+		border: 1px solid red;
+	}
+	</style>
+</head>
+<body>
+	<canvas id="cvs"></canvas>
+	<script>
+	var cvs = document.getElementById("cvs");
+	var ctx = cvs.getContext("2d");
+	cvs.width = "500";
+	cvs.height = "500";
+
+	// 扇形基础
+	// ctx.moveTo(200,200);
+	// ctx.arc(200,200,100,-Math.PI/2,Math.PI/6);
+	// ctx.closePath();
+	// ctx.fillStyle = "deeppink";
+	// ctx.fill();
+
+	// ctx.beginPath();
+	// ctx.moveTo(200,200);
+	// ctx.arc(200,200,100,Math.PI/6,5*Math.PI/6);
+	// ctx.closePath();
+	// ctx.fillStyle = "skyblue";
+	// ctx.fill();
+
+	// ctx.beginPath();
+	// ctx.moveTo(200,200);
+	// ctx.arc(200,200,100,5*Math.PI/6,-Math.PI/2);
+	// ctx.closePath();
+	// ctx.fillStyle = "orange";
+	// ctx.fill();
+
+	// 扇形对象
+	/*
+		obj 格式 {
+			part1 : ["皇马" , 30 , 'red'],
+			part2 : ["巴萨" , 20 , 'green'],
+			part3 : ["曼联" , 38 , 'blue'],
+			part4 : ["拜仁" , 12 , 'deeppink']
+		}
+	*/
+	function ShanXing(obj){
+		this.draw(obj);
+	}
+
+	ShanXing.prototype.draw = function(obj){
+		var startAngle = -Math.PI/2;
+		for(var k in obj){
+			// 每份所占的弧度
+			var hudu = Math.PI*2*(obj[k][1])/100;
+			ctx.beginPath();
+			ctx.moveTo(200,200);
+			ctx.arc(200,200,100,startAngle,startAngle+hudu);
+			// 更新开始的角度，在此基础继续画
+			startAngle = startAngle+hudu;
+			ctx.closePath();
+			ctx.fillStyle = obj[k][2];
+			ctx.fill();
+			
+			// 画引线
+			ctx.beginPath();
+			ctx.moveTo(200+80*Math.cos(startAngle-hudu/2),200+80*Math.sin(startAngle-hudu/2));
+			ctx.lineTo(200+150*Math.cos(startAngle-hudu/2),200+150*Math.sin(startAngle-hudu/2));
+			ctx.stroke();
+			// 写字
+			ctx.font = "18px 微软雅黑";
+			ctx.textAlign = "center";
+			if((startAngle-hudu/2) > 0 && (startAngle-hudu/2) < Math.PI){
+				ctx.textBaseline = "top";
+			} else {
+				ctx.textBaseline = "bottom";
+			}
+			ctx.fillStyle = "#4183d7";
+			ctx.fillText(obj[k][0],200+150*Math.cos(startAngle-hudu/2),200+150*Math.sin(startAngle-hudu/2));
+		}
+	}
+
+	var sx = new ShanXing({
+		part1 : ["皇马" , 28 , '#f64747'],
+		part2 : ["巴萨" , 38 , '#2ecc71'],
+		part3 : ["曼联" , 21 , '#4183d7'],
+		part4 : ["拜仁" , 13 , 'orange']
+	});
+
+	</script>
+</body>
+</html>

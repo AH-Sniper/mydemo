@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	body {
+		text-align: center;
+		min-height: 600px;
+	}
+	#wraper {
+		position: fixed;
+		left: 50%;
+		margin-left: -251px;
+	}
+	#wraper div {
+		width: 12px;
+		height: 12px;
+		background-color: red;
+		position: absolute;
+		cursor: pointer;
+	}
+	#startCoor {
+		left: 0;
+		top: 0;
+	}
+	#firstCoor {
+		left: 0;
+		top: 20px;
+	}
+	#secondCoor {
+		left: 0;
+		top: 40px;
+	}
+	canvas {
+		border: 1px solid deeppink;
+	}
+	</style>
+</head>
+<body>
+	<div id="wraper">
+		<div id="startCoor"></div>
+		<div id="firstCoor"></div>
+		<div id="secondCoor"></div>
+		<canvas id="cvs"></canvas>
+	</div>
+	
+
+
+	<script>
+	/*
+		绘制相切弧构造函数
+		参数：（起点坐标，第一个参考点，第二个参考点，圆弧半径）
+				startCoor , firstCoor , secondCoor , radius
+				规定坐标以数组形式存放 [x , y]
+		config = {
+			startCoor : ... ,
+			firstCoor : ... ,
+			...
+		}
+	*/
+	function ArcTo(ctx,config){
+		this.ctx = ctx;
+		// 把变量存储为属性
+		this.startCoor = config.startCoor;
+		this.firstCoor = config.firstCoor;
+		this.secondCoor = config.secondCoor;
+		this.radius = config.radius;
+	}
+
+	ArcTo.prototype = {
+		constructor : ArcTo,
+		// 每个点画个小矩形便于查看
+		drawPoint : function(){
+			this.ctx.fillStyle = "red";
+			this.ctx.fillRect(this.startCoor[0] - 4,this.startCoor[1] - 4,8,8);
+			this.ctx.fillRect(this.firstCoor[0] - 4,this.firstCoor[1] - 4,8,8);
+			this.ctx.fillRect(this.secondCoor[0] - 4,this.secondCoor[1] - 4,8,8);
+		},
+		drawQieXian : function(){
+			this.ctx.beginPath();
+			this.ctx.moveTo(this.firstCoor[0],this.firstCoor[1]);
+			this.ctx.lineTo(this.secondCoor[0],this.secondCoor[1]);
+			this.ctx.strokeStyle = "red";
+			this.ctx.stroke();
+		},
+		drawArc : function(){
+			this.ctx.beginPath();
+			this.ctx.moveTo(this.startCoor[0],this.startCoor[1]);
+			this.ctx.arcTo(this.firstCoor[0],this.firstCoor[1],this.secondCoor[0],this.secondCoor[1],this.radius);
+			this.ctx.strokeStyle = "blue";
+			this.ctx.stroke();
+		}
+	}
+
+	</script>
+
+	<script>
+		var cvs = document.getElementById("cvs");
+		var ctx = cvs.getContext("2d");
+		cvs.width = "500";
+		cvs.height = "500";
+
+		var startDiv = document.getElementById("startCoor");
+		var firstDiv = document.getElementById("firstCoor");
+		var secondDiv = document.getElementById("secondCoor");
+		var wraperDiv = document.getElementById("wraper");
+
+		// var cfg = {
+		// 	startCoor : [380,100],
+		// 	firstCoor : [100,400],
+		// 	secondCoor : [300,460],
+		// 	radius : 120
+		// };
+		// var yuanhu = new ArcTo(ctx,cfg);
+
+		// yuanhu.drawPoint();
+		// yuanhu.drawQieXian();
+		// yuanhu.drawArc();
+		
+		var startX = 0;
+		var startY = 0;
+		var divX = 0;
+		var divY = 0;
+		var flag = false;
+		var target = null;
+		var cfg = null;
+		var yuanhu = null;
+		wraperDiv.onmousedown = function(e){
+			console.log('鼠标按下');
+			target = e.target;
+
+			if(target !== cvs){
+
+				divX = parseInt(window.getComputedStyle(target)['left']);
+				divY = parseInt(window.getComputedStyle(target)['top']);
+				startX = e.pageX;
+				startY = e.pageY;
+
+				flag = true;
+			}
+			// 阻止快速拖动时触发默认的不允许 drag 事件
+			e.preventDefault();
+		}
+		wraperDiv.onmousemove = function(e){
+			if(flag){
+				cfg = null;
+				yuanhu = null;
+				// console.log('move');
+				target.style.left = (e.pageX - startX)+divX+'px';
+				target.style.top = (e.pageY - startY)+divY+'px';
+				ctx.clearRect(0,0,cvs.width,cvs.height);
+
+				var ax = parseInt(window.getComputedStyle(startDiv)['left']) + 6;
+				var ay = parseInt(window.getComputedStyle(startDiv)['top']) + 6;
+				var bx = parseInt(window.getComputedStyle(firstDiv)['left']) + 6;
+				var by = parseInt(window.getComputedStyle(firstDiv)['top']) + 6;
+				var cx = parseInt(window.getComputedStyle(secondDiv)['left']) + 6;
+				var cy = parseInt(window.getComputedStyle(secondDiv)['top']) + 6;
+
+ 				cfg = {
+ 					startCoor : [ax,ay],
+ 					firstCoor : [bx,by],
+ 					secondCoor : [cx,cy],
+ 					radius : Math.sqrt(Math.pow((bx-cx),2)+Math.pow((by-cy),2))
+ 				};
+				yuanhu = new ArcTo(ctx,cfg);
+				// yuanhu.drawPoint();
+				yuanhu.drawQieXian();
+				yuanhu.drawArc();
+			}
+		}
+		document.onmouseup = function(){
+			flag = false;
+			target = null;
+			// console.log('mouseup');
+		}
+
+
+	</script>
+</body>
+</html>

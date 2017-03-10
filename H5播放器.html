@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	figcaption {
+		font-family: Microsoft Yahei;
+		text-align:center;
+		position: relative;
+		top: 60px;
+		color: #4a4a4a;
+	}
+	figcaption::selection {
+		background-color: #ddd;
+	}
+	.outterBox {
+		width: 600px;
+		height: auto;
+		margin: 100px auto;
+		color: #4a4a4a;
+		position: relative;
+	}
+	.outterBox.full {
+		position: fixed;
+		left: 0;
+		top: 0;
+		margin: 0;
+		width: auto;
+		height: auto;
+	}
+	.outterBox video {
+		width: 600px;
+		height: 370px;
+		cursor: pointer;
+	}
+	.outterBox .bigPlayBtn {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-top: -38px;
+		margin-left: -35px;
+		font-size: 70px;
+		cursor: pointer;
+		user-select: none;
+		opacity: .8;
+		transition: all .5s;
+	}
+	/* 大播放按钮点击添加动画类*/
+	.outterBox .bigPlayBtn.clicked {
+		opacity: 0;
+		transform: scale(1.5);
+	}
+	.controlBar {
+		position: absolute;
+		bottom: 25px;
+		left:50%;
+		margin-left: -296px;
+		width: 592px;
+		height: 30px;
+		background-color: #f8f8f8;
+		border-radius: 3px;
+		box-shadow: 0 3px 6px 1px rgba(0,0,0,.3);
+		user-select: none;
+		transition: all .5s;
+		opacity: 0;
+	}
+	.outterBox:hover .controlBar {
+		opacity: 1;
+	}
+	@font-face {
+		font-family: iconfont;
+		src: url(font/ux_videoControl/iconfont.eot);
+		src: url(font/ux_videoControl/iconfont.woff);
+		src: url(font/ux_videoControl/iconfont.ttf);
+	}
+	.iconfont {
+		font-family: iconfont;
+	}
+	.controlBar .play {
+		position: absolute;
+		left: 10px;
+		top: 0;
+		height: 30px;
+		cursor: pointer;
+		line-height: 30px;
+	}
+	.controlBar .fullScreen {
+		position: absolute;
+		right: 10px;
+		top: 0;
+		height: 30px;
+		cursor: pointer;
+		line-height: 30px;
+	}
+	.controlBar .progress {
+		width: 360px;
+		height: 6px;
+		background-color: #ddd;
+		margin: 12px 40px;
+		border-radius: 3px;
+		position: relative;
+		overflow: hidden;
+	}
+	.controlBar .progress .progressBar {
+		display: block;
+		width: 0%;
+		height: 100%;
+		background-color: #4a4a4a;
+	}
+	.controlBar .playTime {
+		position: absolute;
+		top: 0;
+		right: 40px;
+		width: 135px;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		font-size: 13px;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var vi = document.querySelector("video");
+		var playTime = document.querySelector(".playTime");
+		var duration = parseInt(vi.duration);
+		var progressBar = document.querySelector(".progressBar");
+
+ 		playTime.innerHTML = timeFormat(vi.currentTime)+"/"+timeFormat(duration);
+ 		
+ 		var timer = null;
+ 		vi.onplay = function(){
+ 			timer = setInterval(onPlay,1000);
+ 		}
+
+ 		function onPlay(){
+ 			playTime.innerHTML = timeFormat(vi.currentTime)+"/"+timeFormat(duration);
+ 			progressBar.style.width = 100*parseInt(vi.currentTime)/parseInt(duration)+"%";
+ 			if(vi.currentTime >= duration) {
+ 				clearInterval(timer);
+ 				playBtn.innerHTML = "&#xe649";
+ 				flag1 = false;
+				bgBtn.classList.remove("clicked");
+ 			}
+ 		 }
+
+ 		function timeFormat(time){
+ 			var h = parseInt((time/3600)%24);
+ 			var m = parseInt((time/60)%60);
+ 			var s = parseInt(time%60);
+ 			// if(h<10) { h = "0"+h;};
+ 			// if(m<10) { m = "0"+m;};
+ 			// if(s<10) { s = "0"+s;};
+ 			h = h < 10 ? ("0"+h) : h;
+ 			m = m < 10 ? ("0"+m) : m;
+ 			s = s < 10 ? ("0"+s) : s;
+
+ 			return h+":"+m+":"+s;
+ 		}
+		// alert(duration);
+		var outterBox = document.querySelector(".outterBox");
+		// 大播放按钮点击事件
+		var flag1 = false;
+		var bgBtn = document.querySelector(".bigPlayBtn");
+		vi.onclick = clickPlay;
+		bgBtn.onclick = clickPlay;		
+		// controlBar 播放按钮
+		var playBtn = document.querySelector(".play");
+		playBtn.onclick = clickPlay;
+
+		function clickPlay(){
+			if(flag1 === false) {
+				bgBtn.classList.add("clicked");
+				playBtn.innerHTML = "&#xe666";
+				flag1 = true;
+				vi.play();
+			} else {
+				bgBtn.classList.remove("clicked");
+				playBtn.innerHTML = "&#xe649";
+				flag1 = false;
+				vi.pause();
+ 				clearInterval(timer);
+			}
+		}
+
+ 		// 进度条点击
+ 		var progress = document.querySelector(".progress");
+ 		var progressOffsetLeft = getOffsetLeft(progress);
+
+ 		function getOffsetLeft(ele){
+ 			var offLeft = ele.offsetLeft;
+ 			var body = document.querySelector("body");
+ 			while(ele.parentNode !== body){
+ 				ele = ele.parentNode;
+ 				offLeft += ele.offsetLeft;
+ 			}
+ 			return offLeft;
+ 		}
+
+ 		progress.onclick = function(e){
+ 			var mouseX = e.pageX;
+ 			var deltaX = mouseX - progressOffsetLeft;
+ 			var percent = deltaX/progress.offsetWidth;
+ 			progressBar.style.width = parseInt(100*percent)+"%";
+ 			clearInterval(timer);
+ 			vi.currentTime  = duration*percent;
+ 			timer = setInterval(onPlay,1000);
+ 		};
+
+ 		// 全屏按钮
+ 		var full = document.querySelector(".fullScreen");
+ 		var flag2 = false;
+ 		full.onclick = function(){
+ 			if(flag2 === false) {
+ 				outterBox.classList.add("full");
+
+ 				vi.style.width = window.innerWidth + "px";
+ 				vi.style.height = window.innerHeight + "px";
+ 				flag2 = true;
+ 			} else {
+ 				outterBox.classList.remove("full");
+ 				vi.style.width = "600px";
+ 				vi.style.height = "370px";
+ 				flag2 = false;
+ 			}
+ 		}
+	}	
+	</script>
+</head>
+<body>
+	<!-- 多媒体 -->
+	<figure>
+		<figcaption>自定义 HTML5 播放器</figcaption>
+		<div class="outterBox">
+			<video src="video/01-课程介绍.mp4"></video>
+			<div class="controlBar">
+				<span class="play iconfont">&#xe649</span>
+				<div class="progress">
+					<span class="progressBar"></span>
+				</div>
+				<span class="playTime"></span>
+				<span class="fullScreen iconfont">&#xe610</span>
+			</div>
+			<span class="bigPlayBtn iconfont">&#xe800</span>
+		</div>
+	</figure>
+</body>
+</html>
